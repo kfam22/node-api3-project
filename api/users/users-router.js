@@ -1,5 +1,5 @@
 const express = require('express');
-const { validateUserId } = require('../middleware/middleware');
+const { validateUserId, validateUser } = require('../middleware/middleware');
 const User = require('./users-model');
 
 
@@ -19,9 +19,14 @@ router.get('/:id', validateUserId, (req, res, next) => {
   res.json(req.user)
 });
 
-router.post('/', (req, res) => {
+router.post('/', validateUser, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER OBJECT
   // this needs a middleware to check that the request body is valid
+  User.insert(req.body)
+  .then(user => {
+    res.status(201).json(user)
+  })
+  .catch(next)
 });
 
 router.put('/:id', validateUserId, (req, res) => {
@@ -49,6 +54,14 @@ router.post('/:id/posts', validateUserId, (req, res) => {
   // and another middleware to check that the request body is valid
   console.log(req.user)
 });
+
+router.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    custom: "something went wrong",
+    message: err.message,
+    stack: err.stack
+  })
+})
 
 // do not forget to export the router
 module.exports = router
