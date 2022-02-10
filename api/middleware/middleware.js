@@ -43,11 +43,17 @@ function validateUser(req, res, next) {
 }
 
 function validatePost(req, res, next) {
-  console.log('validatePost middleware')
-  next()
+  if(req.body.text && req.body.text.trim()){
+    req.body.text = req.body.text.trim();
+    next();
+  } else {
+    next({
+      status: 400,
+      message: "missing required text field"
+    })
+  }
 }
 
-// do not forget to expose these functions to other modules
 module.exports = {
 logger,
 validateUserId,
