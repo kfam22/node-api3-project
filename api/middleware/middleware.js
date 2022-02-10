@@ -7,7 +7,7 @@ function logger(req, res, next) {
 }
 
 async function validateUserId(req, res, next) {
-  console.log('validateUserId middleware')
+  // console.log('validateUserId middleware')
   try{
     // get user by id
     const user = await User.getById(req.params.id)
